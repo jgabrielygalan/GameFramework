@@ -5,7 +5,7 @@ require 'components/bag'
 module Stronghold
 	UNIT_VALUE = {"g" => 1, "o" => 2, "t" => 3}
 
-	class Game < Game
+	class Game < GameFramework::Game
 		attr_accessor :active_player 
 		attr_accessor :resources, :action_units, :attacker_glory, :unit_pouch
 		attr_accessor :defender_glory, :hourglasses, :used_glory_abilities

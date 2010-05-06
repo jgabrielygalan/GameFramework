@@ -2,11 +2,11 @@
 #$LOAD_PATH << here
 
 require 'game/event'
-require 'games/stronghold/stronghold'
+require 'game/game'
 
 class Controller
 	def run
-		@game = Stronghold::Game.new("jesus", "alvaro")
+		choose_game
 		show_game_state
 		begin
 			event = show_and_get_event(@game.view)
@@ -19,6 +19,17 @@ class Controller
 		end until @game.end_game?
 		show(@game.view)
 	end
+	
+	def choose_game
+		begin
+			puts "Choose a game: "
+			GameFramework::Game.available_games.each_with_index {|g, i| puts "#{i}. #{g}"}
+			game = gets.chomp.to_i
+			chosen = GameFramework::Game.available_games[game]
+		end until chosen
+		@game = chosen.send(:new, "jesus", "alvaro")
+	end
+	
 	def show_game_state
 		puts "-" * 100
 		p @game
