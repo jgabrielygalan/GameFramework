@@ -1,79 +1,13 @@
-require '../components/bag'
+require 'event'
+require 'game'
 
-class Controller
-	def run
-		@game = Stronghold::Game.new("jesus", "alvaro")
-		show_game_state
-		begin
-			current_handler = @game.current_event_handler
-			view = current_handler.view
-			event = show_and_get_event(view)
-			begin
-				next_handler = current_handler.execute_event event
-				@game.current_event_handler = next_handler
-				show_game_state
-			rescue StandardError => e
-				puts "Invalid event. #{e} #{e.backtrace.join("\n")}"
-			end			
-		end until @game.end_game?
-		show(@game.current_event_handler.view)
-	end
-	def show_game_state
-		puts "-" * 100
-		p @game
-	end
-	def show_and_get_event view
-		show view
-		puts "Type the event"
-		event = gets.chomp
-		id, *params = event.split(",")
-		h = params.inject({}) do |hash, tuple|
-			key, value = tuple.split("=")
-			hash[key.to_sym] = value
-			hash
-		end
-		Event.new id.to_sym, h
-	end
-	
-	def show view
-		p view
-	end
-end
-
-class Event
-	attr_reader :id, :params
-	
-	def initialize id, params
-		@id = id
-		@params = params
-	end
-end
-
-class EventHandler
-	def self.inherited subclass
-		subclass.instance_eval do
-			@events = {}
-		end
-		class << subclass; self; end.instance_eval {attr_accessor :events}
-	end
-	
-	def self.register_event eventID, method
-		events[eventID] = method
-	end
-	
-	def execute_event event
-		eventID = event.id
-		method = self.class.events[eventID]
-		raise "No handler for event [#{eventID}]" unless method
-		send method, event
-	end
-end
+require 'components/bag'
 
 module Stronghold
 	UNIT_VALUE = {"g" => 1, "o" => 2, "t" => 3}
 
-	class Game
-		attr_accessor :current_event_handler, :active_player 
+	class Game < Game
+		attr_accessor :active_player 
 		attr_accessor :resources, :action_units, :attacker_glory, :unit_pouch
 		attr_accessor :defender_glory, :hourglasses, :used_glory_abilities
 		
@@ -82,7 +16,7 @@ module Stronghold
 			@defender = defender
 			setup_attacker
 			setup_defender
-			self.current_event_handler = Stronghold::InitialEventHandler.new self
+			@current_event_handler = Stronghold::InitialEventHandler.new self
 		end
 		
 		def setup_attacker
@@ -116,9 +50,6 @@ module Stronghold
 			@hourglasses += 1
 		end
 		
-		def end_game?
-			self.current_event_handler.end_state?
-		end
 	end
 	
 	
@@ -132,7 +63,7 @@ module Stronghold
 			@game.add_resources 5
 			draw_units
 			@game.active_player = :attacker
-			@view = "Game started. Your units for this turn are: #{@game.action_units.inspect} \n You can pass (pass) or assign 1 unit to gather resources ([t|o|g])"
+			@view = "Game started. Your units for this turn are: #{@game.action_units.inspect} \n You can pass (pass) or assign 1 unit to gather resources (use,unit=[t|o|g])"
 		end
 		
 		def draw_units
@@ -174,5 +105,3 @@ module Stronghold
 		end
 	end
 end
-
-Controller.new.run
