@@ -1,7 +1,8 @@
 #here = File.expand_path(File.dirname(__FILE__) + "/..")
 #$LOAD_PATH << here
 
-require 'stronghold'
+require 'game/event'
+require 'games/stronghold/stronghold'
 
 class Controller
 	def run

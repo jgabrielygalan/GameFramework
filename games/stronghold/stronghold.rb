@@ -1,6 +1,5 @@
-require 'event'
-require 'game'
-
+require 'game/game'
+require 'game/event'
 require 'components/bag'
 
 module Stronghold
