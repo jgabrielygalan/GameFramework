@@ -1,0 +1,17 @@
+Board
+
+
+Attacker 
+	Glory points (initial 10)
+	Resources (initial 5)
+	Unit pouch (initial: 60 goblins, 100 orcs, 40 trolls)
+	Action units (initial: 0)
+	Phase 1-6 cards (1/6 fixed, 2-5 choose procedure)
+	1 Camp card
+	Tokens (weapons, rituals, etc)
+
+
+Defender 
+	Glory points (initial 4 assigned to special abilities)
+	Hourglasses (initial 4)
+
