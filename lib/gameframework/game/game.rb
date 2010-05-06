@@ -5,7 +5,6 @@ module GameFramework
 		end
 		
 		def self.inherited subclass
-			puts "#{subclass} inherits from Game"
 			(@available_games ||= []) << subclass
 		end
 		
