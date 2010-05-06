@@ -1,6 +1,6 @@
-require 'game/game'
-require 'game/event'
-require 'components/bag'
+require 'gameframework/game/game'
+require 'gameframework/game/event'
+require 'gameframework/components/bag'
 
 module Stronghold
 	UNIT_VALUE = {"g" => 1, "o" => 2, "t" => 3}
@@ -52,7 +52,7 @@ module Stronghold
 	end
 	
 	
-	class InitialEventHandler < EventHandler
+	class InitialEventHandler < GameFramework::EventHandler
 		attr_reader :view
 		register_event :pass, :pass
 		register_event :use, :use_unit

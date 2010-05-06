@@ -1,0 +1,3 @@
+= GameFramework
+
+GameFramework is a framework to easily develop turn based games
