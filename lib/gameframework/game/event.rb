@@ -9,6 +9,27 @@ module GameFramework
 	end
 
 	class EventHandler
+		attr_reader :view, :model
+		
+		def initialize game
+			@game = game
+			@model = Model.new
+			@model[:game] = @game
+			@view = self.class.default_view
+			puts "event handler #{self.class} initialized with #{@game}, #{@model}, #{@view}"
+		end
+
+		def execute_event event
+			event_id = event.event_id
+			method = self.class.events[event_id]
+			raise "No handler for event [#{event_id}]" unless method
+			send method, event
+		end
+
+		def end_state?
+			false
+		end
+
 		def self.inherited subclass
 			subclass.instance_eval do
 				@events = {}
@@ -20,11 +41,21 @@ module GameFramework
 			events[event_id] = method
 		end
 		
-		def execute_event event
-			event_id = event.event_id
-			method = self.class.events[event_id]
-			raise "No handler for event [#{event_id}]" unless method
-			send method, event
+		def self.default_view view=nil
+			if view
+				@default_view = view
+			end
+			@default_view
+		end		
+	end
+	
+	class Model
+		def []=(key, value)
+			instance_variable_set("@#{key}".to_sym, value)
+		end
+		
+		def get_binding
+			binding
 		end
 	end
 end

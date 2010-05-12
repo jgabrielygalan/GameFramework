@@ -6,6 +6,7 @@ module Stronghold
 	UNIT_VALUE = {"g" => 1, "o" => 2, "t" => 3}
 
 	class Game < GameFramework::Game
+		view_path File.expand_path(File.join(File.dirname(__FILE__), "views"))
 		attr_accessor :active_player 
 		attr_accessor :resources, :action_units, :attacker_glory, :unit_pouch
 		attr_accessor :defender_glory, :hourglasses, :used_glory_abilities
@@ -15,7 +16,7 @@ module Stronghold
 			@defender = defender
 			setup_attacker
 			setup_defender
-			@current_event_handler = Stronghold::InitialEventHandler.new self
+			@current_event_handler = Stronghold::Initial.new self
 		end
 		
 		def setup_attacker
@@ -47,36 +48,34 @@ module Stronghold
 			raise "No units of type #{type} are usable" if @action_units[type] <= 0
 			@action_units[type] -= 1
 			@hourglasses += 1
-		end
+		end		
+	end	
+
+	class Initial < GameFramework::EventHandler
+		register_event :start_game, :start
+		default_view :start
 		
-	end
-	
-	
-	class InitialEventHandler < GameFramework::EventHandler
-		attr_reader :view
-		register_event :pass, :pass
-		register_event :use, :use_unit
-		
-		def initialize game
-			@game = game
+		def start event
+			@game.active_player = :attacker
 			@game.add_resources 5
 			draw_units
-			@game.active_player = :attacker
-			@view = "Game started. Your units for this turn are: #{@game.action_units.inspect} \n You can pass (pass) or assign 1 unit to gather resources (use,unit=[t|o|g])"
+			Phase1.new @game
 		end
-		
+
 		def draw_units
 			14.times do 
 				@game.draw_unit
 			end
 		end
-		
-		def end_state?
-			false
-		end
+	end
 
+	class Phase1 < GameFramework::EventHandler
+		register_event :pass, :pass
+		register_event :use, :use_unit
+		default_view :phase1
+		
 		def pass event
-			Phase2State.new @game
+			Phase2.new @game
 		end
 		
 		def use_unit event
@@ -84,23 +83,14 @@ module Stronghold
 			value = UNIT_VALUE[unit]
 			@game.use_unit unit
 			@game.add_resources value
-			Phase2State.new @game
+			Phase2.new @game
 		end
 	end
 	
-	class Phase2State
-		attr_reader :view
-		def initialize game
-			@game = game
-			@view = "game ended. jesus wins!"
-		end
-		
+	class Phase2 < GameFramework::EventHandler
+		default_view :phase2
 		def end_state?
 			true
-		end
-		
-		def execute_event event
-			raise "The game has finished. No more player actions required"
 		end
 	end
 end

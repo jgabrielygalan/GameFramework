@@ -1,5 +1,6 @@
 require 'gameframework/game/event'
 require 'gameframework/game/game'
+require 'erb'
 
 module GameFramework
 	class Controller
@@ -7,7 +8,7 @@ module GameFramework
 			choose_game
 			show_game_state
 			begin
-				event = show_and_get_event(@game.view)
+				event = show_and_get_event(@game)
 				begin
 					@game.execute_event event
 					show_game_state
@@ -15,7 +16,7 @@ module GameFramework
 					puts "Invalid event. #{e} #{e.backtrace.join("\n")}"
 				end			
 			end until @game.end_game?
-			show(@game.view)
+			show(@game)
 		end
 		
 		def choose_game
@@ -31,9 +32,10 @@ module GameFramework
 		def show_game_state
 			puts "-" * 100
 			p @game
+			puts "-" * 100
 		end
-		def show_and_get_event view
-			show view
+		def show_and_get_event game
+			show game
 			puts "Type the event"
 			event = gets.chomp
 			id, *params = event.split(",")
@@ -45,8 +47,10 @@ module GameFramework
 			Event.new id.to_sym, h
 		end
 		
-		def show view
-			p view
+		def show game
+			model, view = game.model_and_view
+			template = ERB.new(File.read("#{game.view_path}#{view}.erb"), nil, "%<>")
+			puts template.result(model.get_binding)
 		end
 	end
 end
