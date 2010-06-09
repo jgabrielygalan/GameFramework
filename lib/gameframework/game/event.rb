@@ -15,15 +15,18 @@ module GameFramework
 			@game = game
 			@model = Model.new
 			@model[:game] = @game
-			@view = self.class.default_view
-			puts "event handler #{self.class} initialized with #{@game}, #{@model}, #{@view}"
+			@view = self.class.default_view			
 		end
 
 		def execute_event event
 			event_id = event.event_id
 			method = self.class.events[event_id]
 			raise "No handler for event [#{event_id}]" unless method
-			send method, event
+			@game.event_handler = self
+			event_handler, event = send method, event
+			if event
+				event_handler.execute_event event
+			end	
 		end
 
 		def end_state?

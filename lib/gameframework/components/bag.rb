@@ -12,7 +12,7 @@ class Bag
 	
 	alias :<< :put
 	
-	def get
+	def draw
 		index = rand(@total)
 		element = @storage.find do |k,v|
 			index < v || (index -= v; false)
@@ -22,13 +22,26 @@ class Bag
 		element.first
 	end
 
-	alias :draw :get
-	
+	def draw_of_type type
+		count = @storage[type]
+		if count > 0
+			@storage[type] -= 1
+			@total -= 1
+			type
+		else
+			nil
+		end
+	end
+
 	def empty?
 		@total == 0
 	end
 	
 	def size
 		@total
+	end
+	
+	def count type
+		@storage[type]
 	end
 end

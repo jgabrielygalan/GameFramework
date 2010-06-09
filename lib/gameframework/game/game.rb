@@ -1,5 +1,6 @@
 module GameFramework
 	class Game
+		attr_accessor :event_handler
 		class << self
 			attr_accessor :available_games
 		end
@@ -21,16 +22,15 @@ module GameFramework
 		end
 		
 		def model_and_view
-			[@current_event_handler.model, @current_event_handler.view]
+			[@event_handler.model, @event_handler.view]
 		end
 		
 		def execute_event event
-			next_handler = @current_event_handler.execute_event event
-			@current_event_handler = next_handler
+			@event_handler.execute_event event			
 		end
 
 		def end_game?
-			@current_event_handler.end_state?
+			@event_handler.end_state?
 		end
 	end
 end
