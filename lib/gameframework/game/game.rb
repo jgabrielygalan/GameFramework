@@ -1,12 +1,14 @@
 module GameFramework
 	class Game
 		attr_accessor :event_handler
+		@available_games = []
+
 		class << self
-			attr_accessor :available_games
+			attr_reader :available_games
 		end
 		
 		def self.inherited subclass
-			(@available_games ||= []) << subclass
+			@available_games << subclass
 		end
 		
 		def self.view_path path=nil
