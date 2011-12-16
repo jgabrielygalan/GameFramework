@@ -3,11 +3,13 @@ require 'gameframework/game/event'
 require 'gameframework/components/bag'
 
 module Stronghold
-	UNIT_VALUE = {"g" => 1, "o" => 2, "t" => 3}
+	UNIT_VALUE = {:g => 1, :o => 2, :t => 3}
 
 	class Game < GameFramework::Game
 		view_path File.expand_path(File.join(File.dirname(__FILE__), "views"))
-		attr_accessor :active_player 
+		initial_view :initial
+		initial_accepted_events :turn_start
+
 		attr_accessor :resources, :action_units, :attacker_glory, :unit_pouch
 		attr_accessor :defender_glory, :hourglasses, :used_glory_abilities
 		
@@ -16,17 +18,17 @@ module Stronghold
 			@defender = defender
 			setup_attacker
 			setup_defender
-			@event_handler = Stronghold::Initial.new self
+			@end = false
 		end
 		
 		def setup_attacker
 			@attacker_glory = 10
 			@resources = 5
 			@unit_pouch = Bag.new
-			60.times {@unit_pouch << "g"}
-			100.times {@unit_pouch << "o"}
-			40.times {@unit_pouch << "t"}
-			@action_units = {"g" => 0, "o" => 0, "t" => 0}
+			60.times {@unit_pouch << :g}
+			100.times {@unit_pouch << :o}
+			40.times {@unit_pouch << :t}
+			@action_units = Hash.new(0)
 		end
 
 		def setup_defender
@@ -45,63 +47,47 @@ module Stronghold
 		end
 		
 		def use_unit type
+			type = type.to_sym
 			raise "No units of type #{type} are usable" if @action_units[type] <= 0
 			@action_units[type] -= 1
 			@hourglasses += 1
 		end		
-	end	
-
-	class Initial < GameFramework::EventHandler
-		register_event :start_game, :start
-		default_view :start
 		
-		def start event
-			@game.active_player = :attacker
-			[Phase1.new(@game), GameFramework::Event.new(:turn_start)]
+		# Game contract methods
+		def end_game?
+			@end
 		end
 
-	end
+		# Transition methods
 
-	class Phase1 < GameFramework::EventHandler
-		register_event :pass, :pass
-		register_event :use, :use_unit
-		register_event :turn_start, :start
-		default_view :phase1
-		
-		def start event
-			@game.add_resources 5
-			draw_units
-			:player_input
+		def turn_start event
+			active_player = :attacker
+			add_resources 5
+			14.times {draw_unit}
+			[:phase1_attacker, [:pass_1, :more_resources]]
 		end
-	
-		def pass event
-			[Phase2.new(@game), GameFramework::Event.new(:phase2_start)]
+
+		def pass_1 event
+			@hourglasses += 2
+			# TODO: give defender 1 stone wall
+			[:phase1_defender, [:hg]]
 		end
 		
-		def use_unit event
-			unit = event.params[:unit]
+		def more_resources event
+			unit = event.params[:unit].to_sym
 			value = UNIT_VALUE[unit]
-			@game.use_unit unit
-			@game.add_resources value
-			[Phase2.new(@game), GameFramework::Event.new(:phase2_start)]
+			use_unit unit
+			add_resources value
+			@hourglasses += 2
+			# TODO: give defender 1 stone wall
+			[:phase1_defender, [:hg]]
 		end
 
-		def draw_units
-			14.times do 
-				@game.draw_unit
-			end
-		end
-	end
-	
-	class Phase2 < GameFramework::EventHandler
-		register_event :phase2_start, :start
-		default_view :phase2
-		
-		def start event
-		end
-	
-		def end_state?
-			true
+		def hg event
+			location = event.params[:location]
+			@hourglasses -= 1
+			@end = true if @hourglasses.zero?
+			[:phase1_defender, [:hg]]
 		end
 	end
 end

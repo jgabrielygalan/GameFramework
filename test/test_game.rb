@@ -1,27 +1,43 @@
-require 'test_helper'
+require 'helper'
 require 'minitest/unit'
 MiniTest::Unit.autorun
 
 require 'gameframework/game/game'
 
-class TestGame < MiniTest::Unit::TestCase	
+class TestGameClass < MiniTest::Unit::TestCase	
 	def setup
-		GameFramework::Game.available_games.clear
+		@game_class = Class.new(GameFramework::Game)
 	end
-	
-	def test_available_games_is_empty
-		assert_empty GameFramework::Game.available_games
+
+	def test_game_responds_to_methods
+		assert_respond_to @game_class, :view_path
 	end
-	
-	def test_available_games_has_one
-		x = Class.new(GameFramework::Game)
-		assert_equal 1, GameFramework::Game.available_games.size
-		assert_equal x, GameFramework::Game.available_games.first
+
+	def test_view_path_initially_nil
+		assert_nil @game_class.view_path
 	end
-	
-	def test_available_games_has_many
-		classes = (1..20).map {Class.new(GameFramework::Game)}
-		assert_equal 20, GameFramework::Game.available_games.size
-		classes.each {|cl| assert_equal cl, GameFramework::Game.available_games.shift}
+
+	def test_view_path_settable
+		@game_class.view_path "test/"
+		assert_equal "test/", @game_class.view_path
+	end
+
+	def test_setting_view_path_adds_slash
+		@game_class.view_path "test"
+		assert_equal "test/", @game_class.view_path
+	end		
+
+	def test_setting_view_path_adds_slash_only_if_required
+		@game_class.view_path "test/"
+		assert_equal "test/", @game_class.view_path
+	end		
+
+
+	def test_two_games_different_view_paths
+		game_class2 = Class.new(GameFramework::Game)
+		@game_class.view_path "test"
+		game_class2.view_path "test2"
+		assert_equal "test/", @game_class.view_path
+		assert_equal "test2/", game_class2.view_path
 	end
 end
