@@ -20,9 +20,12 @@ class Deck
 		raise EmptyDeckError, "The deck is empty" if @deck.empty?
 		raise DeckTooSmall, "The deck doesn't have #{which + 1} items" if @deck.size < which + 1
 		case where
-			when :top: item = @deck.delete_at(which)
-			when :bottom: item = @deck.delete_at(@deck.size - which)
-			when :random: item = @deck.delete_at(rand(@deck.size))
+			when :top
+				item = @deck.delete_at(which)
+			when :bottom
+				item = @deck.delete_at(@deck.size - which)
+			when :random
+				item = @deck.delete_at(rand(@deck.size))
 		end		
 		item
 	end
@@ -50,9 +53,12 @@ class Deck
 	# TODO: change the name, what's the word for the opposite of draw?
 	def insert(item, where = :top)
 		case where
-			when :top: @deck.unshift(item)
-			when :bottom: @deck << item
-			when :random: item = @deck.insert(rand(@deck.size), item)
+			when :top
+				@deck.unshift(item)
+			when :bottom
+				@deck << item
+			when :random
+				item = @deck.insert(rand(@deck.size), item)
 		end		
 		self
 	end

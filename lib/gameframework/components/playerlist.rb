@@ -5,14 +5,18 @@ module GameFramework
 		def initialize *players
 			# support passing an array of players or several players
 			@players = players.flatten
-			@next_player = -1
+			@current = 0
 			@last_player = false
 		end
 		
-		def next_player
-			@last_player = @next_player == (@players.size -1)
-			@next_player = (@next_player + 1) % @players.length
-			player = @players[@next_player]
+		def current_player
+			@players[@current]
+		end
+
+		def next_player!
+			@current = (@current + 1) % @players.size
+			@last_player = @current == (@players.size - 1)
+			current_player
 		end	
 
 		def is_last_player?

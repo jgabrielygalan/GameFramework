@@ -1,0 +1,33 @@
+#player {
+	border: solid 5px green;
+	border-collapse: top left;
+	height: 200px;
+}
+
+#player_name {
+	border: solid 5px green;
+	float: left;
+}
+
+#player_hand {
+	float: left;
+}
+
+#draw_cards {
+	border: solid 5px black;
+	//height: 200px;
+	float: left;
+}
+
+#open_cards {
+	float: left;
+}
+
+#deck_container {
+	float: left;
+}
+
+#draw_tickets {
+	border: solid 5px black;	
+	float: left;
+}

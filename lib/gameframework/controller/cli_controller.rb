@@ -3,7 +3,7 @@ require 'gameframework/game/game'
 require 'erb'
 
 module GameFramework
-	class Controller
+	class CLIController
 		def run
 			while true
 				begin
@@ -28,7 +28,7 @@ module GameFramework
 		def choose_game
 			begin
 				puts "Choose a game: "
-				GameFramework::Game.available_games.each_with_index {|g, i| puts "#{i}. #{g} [#{g.view_path}]"}
+				GameFramework::Game.available_games.values.each_with_index {|g, i| puts "#{i}. #{g} [#{g.view_path}]"}
 				game = gets.chomp.to_i
 				chosen = GameFramework::Game.available_games[game]
 			end until chosen
@@ -38,8 +38,8 @@ module GameFramework
 		
 		def show_game_state
 			puts "-" * 100
-			p @game
-			puts "-" * 100
+			#p @game
+			#puts "-" * 100
 		end
 		
 		def show_and_get_event game

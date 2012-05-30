@@ -1,0 +1,75 @@
+<html>
+<head>
+	<script type="application/javascript" src="<%= resource_path('/js/jquery.1.7.js') %>"></script>
+	<script type="application/javascript" src="<%= resource_path('/js/events.js') %>"></script>
+	<link rel="StyleSheet" href="<%= resource_path('/css/main.css') %>" type="text/css" media="screen" />
+</head>
+<body>
+<div id="player">
+<div id="player_name">
+<%= @game.players.current_player.name %><br/>
+</div>
+<div id="player_hand">
+<% 
+	@game.players.current_player.cards.each do |color, qty| 
+		qty.times do
+%>
+	<img src="<%= resource_path("/img/#{color}.jpg") %>" title="<%= color %>" />
+<% end
+end %>
+</div>
+
+Tickets: <%= @game.players.current_player.tickets.map {|t| "#{t.city1} - #{t.city2}"}.join(",") %><br/>
+Routes: <%= @game.players.current_player.routes.map {|r| r.to_s }.join(",") %><br/>
+Score: <%= @game.players.current_player.score %><br/>
+<% if @game.drawn_tickets %>
+Drawn tickets (check the ones you would like to keep, min 1):
+<fieldset id="drawn_tickets">
+<% @game.drawn_tickets.each_with_index do |ticket, i| %>
+	<label for="drawn_<%= i %>"><%= ticket.city1 %>-<%= ticket.city2 %></label>
+	<input id="drawn_<%= i %>" type="checkbox" checked value="<%= i %>" /><br/>
+<% end %>
+	<input type="button" id="return_tickets" value="Confirm" />
+</fieldset>
+<% end %>
+</div>
+<div id="draw_cards">
+Draw cards (click card or deck) <%= @game.second_card ? "[second card]" : "" %><br/>
+<div id="open_cards">
+<% 
+	@game.display.each do |color, qty| 
+		qty.times do
+			is_clickable = @game.events.include? :draw_card
+			if @game.second_card && color == "locomotive"
+				is_clickable = false
+			end
+			element_class = is_clickable ? "available_card" : ""
+%>
+	<img class="<%= element_class %>" color="<%= color %>" src="<%= resource_path("/img/#{color}.jpg") %>" title="<%= color %>" />
+<% end
+end %>
+</div>
+<div id="deck_container">
+<img id="deck" src="<%= resource_path("/img/draw_deck.jpg") %>" title="<%= @game.deck.size %> remaining" />
+</div>
+<div>
+Discard: <%= @game.discard.size %> cards
+</div>
+</div>
+
+<% if @game.events.include? :draw_tickets %>
+<div id="draw_tickets">
+Draw tickets<br/>
+<img id="tickets" src="<%= resource_path("/img/ticket_deck.jpg") %>" title="Draw tickets" />
+</div>
+<% end %>
+<% if @game.events.include? :build %>
+<input id="build" type="button" value="Build"/>
+<select id="routes">
+<% @game.routes.each do |route| %>
+<option value="<%= h %Q{{"city1":"#{route.city1}", "city2":"#{route.city2}", "color":"#{route.color}"}}%>"><%= route %></option>
+<% end %>
+</select><br/>
+<% end %>
+</body>
+</html>

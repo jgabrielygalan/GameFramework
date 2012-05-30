@@ -1,0 +1,9 @@
+Backlog:
+
+* When two transitions need to execute the same code (for example, there are two ways to reach the start of a turn, 
+and there's something to do), the code is duplicated. Think about implementing code that executes when entering a state.
+
+* Class hierarchy for game utilities related to rounds, turns and phases
+	- TurnBasedGame: you have a list of players. A round consists on a turn for each player. (Carcassonne, TTA)
+	- PhaseBasedGame: a round consists of a list of phases performed by all players in turn (Stronghold)
+	- Hooks and methods for start/end round, turn and phase

@@ -7,7 +7,8 @@ module GameFramework
 		end
 		
 		def self.inherited subclass
-			(@available_games ||= []) << subclass
+			module_name = subclass.name.to_s.split("::").first
+			(@available_games ||= {})[module_name] = subclass
 		end
 		
 		def self.view_path path=nil
@@ -16,6 +17,14 @@ module GameFramework
 				@view_path += "/" unless @view_path.end_with?'/'
 			end
 			@view_path
+		end
+
+		def self.resource_path path=nil
+			unless path.nil?
+				@resource_path = path
+				@resource_path = @resource_path[0..-2] if @resource_path.end_with?('/')
+			end
+			@resource_path
 		end
 
 		def self.initial_view view=nil
@@ -62,7 +71,7 @@ module GameFramework
 			@view, @accepted_events = send handler, event
 		end
 
-		def end_game?
+		def ended?
 			false
 		end
 
