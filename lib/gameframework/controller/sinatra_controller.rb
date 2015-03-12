@@ -1,101 +1,93 @@
 require 'gameframework'
 require 'gameframework/game/event'
 require 'gameframework/game/game'
+require 'gameframework/domain/user'
 require 'sinatra/base'
-require 'json'
-require 'cgi'
+require 'sinatra/json'
 
 module GameFramework
 	class SinatraController < Sinatra::Base
-		use Rack::Session::Pool
-
 		helpers do 
 			def resource_path resource
 				File.join('resources', session['game_key'], resource)
 			end
-			include Rack::Utils
-			alias_method :h, :escape_html
 		end
-
 
 		configure do
 			enable :logging
 		end
 
-		before '/game*' do
-			@game = session['game']
-			@game_key = session['game_key']
+		before do
+    		auth =  Rack::Auth::Basic::Request.new(request.env)
+    		p auth
+    		if auth.provided? and auth.basic? and auth.credentials    			
+    			@user = User.authenticate *auth.credentials
+    			puts "Authenticated user: #{@user.inspect}"
+    		end
+    		halt 401 unless @user
+		end
+
+		before '/games/:name/?:id?/?*' do |name,id,_|
+			puts "Before /games/name"
+			@game_class = GameFramework::Game.available_games[name]
+			halt 404, "Game #{name} not found" unless @game_class
+			if id
+				@game = @game_class.find id
+				p @game
+				halt 404, "Match not found" unless @game
+			end
+			puts "finished before filter"
 		end
 
 		get '/' do
-			@games = get_available_games
-			erb :game_list
+			redirect '/games'
 		end
 
-		get '/create/:game_key' do |game_key|
-			game_class = GameFramework::Game.available_games[game_key]
-			raise "Game not found" unless game_class
-			@game = game_class.send(:new, "jesus", "alicia")
-			session['game'] = @game
-			session['game_key'] = game_key
-			redirect '/game'
-		end
-		
-		get '/game' do
-			erb @game.view, :views => @game.class.view_path
+		get '/games' do
+			games = GameFramework::Game.available_games.map {|name,_| {name: name, uri: uri("/games/#{name}")}}
+			json games: games
 		end
 
-		post '/game/event' do
-			event = CGI.unescape request.params['event']
-			puts "received event #{event}"
-			data = JSON.parse(event)
-			p data
-			if data.nil? 
-				status 400
-			else
-				@game.execute_event data
-				if @game.ended?
-					erb :game_end
-				else
-					erb @game.view, :views => @game.class.view_path
-				end
+		get '/games/:name' do |name|
+			p @game_class
+			matches = @game_class.each.to_a
+			json matches.map {|m| {player1: m.player1, player2: m.player2, active: m.active_player, uri: uri("/games/#{name}/#{m.id}")}}
+		end
+
+		post '/games/:name' do |name|
+			game = @game_class.create!({player1: "jesus", player2: "alicia"})
+			redirect "/games/#{name}/#{game.id}"
+		end
+		
+		get '/games/:name/:id' do |name, _|
+			json game_for(@game, @user, name)
+		end
+
+		post '/games/:name/:id/event' do |name, _|
+			halt 403, "Not your turn" unless @user.id == @game.active_player
+			request.body.rewind
+  			data = JSON.parse request.body.read
+			puts "received event #{data}"
+			
+			halt 400, "Event body is empty" if data.nil? 
+
+			e = get_event(data)
+			@game.execute_event e
+			@game.save
+			json game_for(@game, @user, name)
+		end
+
+		def get_event data
+			id = data.delete "id"
+			Event.new id.to_sym, data
+		end
+
+		def game_for game, user, name
+			game_data = {game: game.for_user(user)}
+			if game.is_active_player? user
+				game_data[:uri] = uri("/games/#{name}/#{game.id}/event")
 			end
-		end
-		
-		def get_available_games
-			GameFramework::Game.available_games
-		end
-		
-		def show_game_state
-			puts "-" * 100
-			#p @game
-			#puts "-" * 100
-		end
-		
-		def show_and_get_event game
-			show game
-			puts "Type the event"
-			event = gets.chomp
-			id, *params = event.split(",")
-			h = params.inject({}) do |hash, tuple|
-				key, value = tuple.split("=")
-				hash[key.to_sym] = value
-				hash
-			end
-			Event.new id.to_sym, h
-		end
-		
-		def show game
-			view = game.view
-			template = ERB.new(File.read("#{@view_path}#{view}.erb"), nil, "%<>")
-			puts template.result(game.get_binding)
+			game_data
 		end
 	end
 end
-
-
-=begin
-/create/:game_id
-/game/event	
-Public resources of a game: /resources/:game_key
-=end

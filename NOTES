@@ -7,3 +7,56 @@ and there's something to do), the code is duplicated. Think about implementing c
 	- TurnBasedGame: you have a list of players. A round consists on a turn for each player. (Carcassonne, TTA)
 	- PhaseBasedGame: a round consists of a list of phases performed by all players in turn (Stronghold)
 	- Hooks and methods for start/end round, turn and phase
+
+* Web front end for games
+	- WebSockets for turn alert
+
+- Request lifecycle
+	- Identify/authenticate user:
+		- HTTP basic auth: all requests carry user/pwd (if no https, bad, credentials are not encrypted)
+		- Session token: login page + cookie
+
+	- Identify game/match
+	- Recover match state from DB
+	- Authorize user for event (user is active user)
+	- Check event is allowed and valid*
+	- Execute event*
+	- Save match in DB
+	- Generate public info + user's private info*
+
+	* these functions are the game implementation, the rest is the framework
+
+* State Machine
+	- Standard events: [game, turn, phase, round]_[start, end], events (arbitrary names)
+	- Standard actions: ask_event!, next_player!, finish_[turn, phase, round]!
+	- Standard states?: game_started
+
+TTT:
+	waiting_for_move:
+		on_entry: ask_event! :move
+		on :move do |move|
+			validate move
+			execute move
+		end.transition_to :move_executed
+
+	move_executed:
+		on_entry: check_game_end
+
+		on :game_continue do |event|
+			next_player!
+		end.transition_to :waiting_for_move
+
+
+transition nothing => waiting_move do
+	on :game_start
+	ask_event! :move
+end
+
+transition waiting_move => check_game_end do
+	on :move
+	validate move
+	execute move
+	finish_turn!
+end
+
+transition check_game_end 

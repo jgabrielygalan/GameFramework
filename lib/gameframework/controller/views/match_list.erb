@@ -1,0 +1,14 @@
+<html>
+<body>
+	<form method="post" action="/game_types/<%= @type %>">
+		<input type="submit" value="Create game" />
+	</form>
+	<br/>
+	<ul>
+<% @games.each do |game| %>
+		<li><%= game %></li>
+	<!-- <a href="/create/<%= game %>"><%= game %></a><br/> -->
+<% end %>
+	</ul>
+</body>
+</html>

@@ -26,13 +26,15 @@ module GameFramework
 		end
 		
 		def choose_game
+			games_by_index = {}
+			GameFramework::Game.available_games.values.each_with_index {|e,i| games_by_index[i] = e}
 			begin
 				puts "Choose a game: "
-				GameFramework::Game.available_games.values.each_with_index {|g, i| puts "#{i}. #{g} [#{g.view_path}]"}
+				games_by_index.each {|i, g| puts "#{i}. #{g} [#{g.view_path}]"}
 				game = gets.chomp.to_i
-				chosen = GameFramework::Game.available_games[game]
+				chosen = games_by_index[game]
 			end until chosen
-			@game = chosen.send(:new, "jesus", "alvaro")
+			@game = chosen.create!({player1: "jesus", player2: "alvaro"})
 			@view_path = chosen.view_path
 		end
 		

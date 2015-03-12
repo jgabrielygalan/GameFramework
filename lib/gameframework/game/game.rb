@@ -1,10 +1,13 @@
 require 'ostruct'
+require 'mongoid'
 
 module GameFramework
 	class Game
 		class << self
 			attr_reader :available_games, :handlers, :initial_view, :initial_accepted_events
 		end
+		
+		attr_accessor :active_player
 		
 		def self.inherited subclass
 			module_name = subclass.name.to_s.split("::").first
@@ -49,7 +52,6 @@ module GameFramework
 			handlers[event_id] = method
 		end 
 		
-		attr_accessor :active_player
 		
 		def view
 			@view ||= self.class.initial_view
