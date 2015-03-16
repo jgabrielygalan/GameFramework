@@ -17,7 +17,7 @@ module GameFramework
 					rescue StandardError => e
 						puts "Error executing event. #{e} #{e.backtrace.join("\n")}"
 					end			
-				end until @game.end_game?
+				end until @game.end_state?
 				show(@game)
 				rescue StandardError => e
 					puts "Error, start a new game. #{e} #{e.backtrace.join("\n")}"
