@@ -40,7 +40,7 @@ module GameFramework
 		end
 
 		get '/games' do
-			games = GameFramework::Game.available_games.map {|name,_| {name: name, uri: uri("/games/#{name}")}}
+			games = GameFramework::Game.available_games.map {|name,_| {id: name, name: name, uri: uri("/games/#{name}")}}
 			json games: games
 		end
 
