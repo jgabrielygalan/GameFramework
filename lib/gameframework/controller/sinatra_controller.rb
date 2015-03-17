@@ -19,24 +19,20 @@ module GameFramework
 
 		before do
     		auth =  Rack::Auth::Basic::Request.new(request.env)
-    		p auth
     		if auth.provided? and auth.basic? and auth.credentials    			
     			@user = User.authenticate *auth.credentials
     			puts "Authenticated user: #{@user.inspect}"
     		end
-    		halt 401 unless @user
+    		#halt 401 unless @user
 		end
 
 		before '/games/:name/?:id?/?*' do |name,id,_|
-			puts "Before /games/name"
 			@game_class = GameFramework::Game.available_games[name]
 			halt 404, "Game #{name} not found" unless @game_class
 			if id
 				@game = @game_class.find id
-				p @game
 				halt 404, "Match not found" unless @game
 			end
-			puts "finished before filter"
 		end
 
 		get '/' do
@@ -49,7 +45,6 @@ module GameFramework
 		end
 
 		get '/games/:name' do |name|
-			p @game_class
 			matches = @game_class.each.to_a
 			json matches.map {|m| {player1: m.player1, player2: m.player2, active: m.active_player, uri: uri("/games/#{name}/#{m.id}")}}
 		end
