@@ -14,6 +14,7 @@ Gem::Specification.new do |spec|
     spec.licenses = %w(MIT)
     spec.name = 'gameframework'
     spec.require_paths = %w(lib)
+    spec.executables = ['cli_launcher', 'launch_sinatra']
     spec.required_ruby_version = '>= 1.9.3'
     spec.summary = File.read(File.join(File.dirname(__FILE__), 'README'))
     spec.version = '0.1.1'
