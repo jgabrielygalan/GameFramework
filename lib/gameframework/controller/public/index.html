@@ -12,9 +12,10 @@
   <script type="text/x-handlebars">
     <div class="navbar">
       <div class="navbar-inner">
-        {{#link-to 'index' class='brand'}}Games{{/link-to}}
+        {{#link-to 'index' class='brand'}}Board Games{{/link-to}}
         <ul class="nav">
-          <li>{{#link-to 'games'}}Create new match{{/link-to}}</li>
+          <li>{{#link-to 'games'}}Games{{/link-to}}</li>
+           <li>{{#link-to 'login'}}Login{{/link-to}}</li>
         </ul>
       </div>
     </div>
@@ -35,7 +36,7 @@
               {{#each game in model}}
                 <tr>
                   <td>
-                    {{#link-to 'games.matchlist' game.name}}{{game.name}} <small class='muted'>{{game.uri}}</small>{{/link-to}}
+                    {{#link-to 'games.matchlist' game.id}}{{game.name}} <small class='muted'>{{game.uri}}</small>{{/link-to}}
                   </td>
                 </tr>
               {{/each}}
@@ -77,6 +78,25 @@
       </div>
     </div>
   </script>
+
+
+
+<script type="text/x-handlebars" id="login">
+  {{#if loggedIn}}
+    <p>You are already logged in!</p>
+  {{else}}
+    <form class="form-inline" {{action 'login' on="submit"}}>
+      <h2>Log In</h2>
+      {{input value=username type="text" placeholder="Username"}}
+      {{input value=password type="password" placeholder="Password"}}
+      {{input class="btn" type="submit" value="Log In"}}
+    </form>
+    {{#if errorMessage}}
+      <div class="alert alert-error">{{errorMessage}}</div>
+    {{/if}}
+  {{/if}}
+</script>
+
 
   <script src="js/libs/jquery-v1.11.1.js"></script>
   <script src="js/libs/handlebars-v1.3.0.js"></script>

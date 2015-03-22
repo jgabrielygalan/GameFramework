@@ -11,19 +11,17 @@ module GameFramework
 			def resource_path resource
 				File.join('resources', session['game_key'], resource)
 			end
+
+			def authenticate!
+				token = params["token"]
+				halt 401 unless token
+				@user = User.find_by(token: token)
+				halt 401 unless @user
+			end
 		end
 
 		configure do
 			enable :logging
-		end
-
-		before do
-    		auth =  Rack::Auth::Basic::Request.new(request.env)
-    		if auth.provided? and auth.basic? and auth.credentials    			
-    			@user = User.authenticate *auth.credentials
-    			puts "Authenticated user: #{@user.inspect}"
-    		end
-    		#halt 401 unless @user
 		end
 
 		before '/games/:name/?:id?/?*' do |name,id,_|
@@ -33,6 +31,11 @@ module GameFramework
 				@game = @game_class.find id
 				halt 404, "Match not found" unless @game
 			end
+		end
+
+		post '/auth' do 
+   			user = User.authenticate params["username"], params["password"]
+			json token: user.token, success: true
 		end
 
 		get '/' do
@@ -45,20 +48,24 @@ module GameFramework
 		end
 
 		get '/games/:name' do |name|
+			authenticate!
 			matches = @game_class.each.to_a
 			json matches.map {|m| {player1: m.player1, player2: m.player2, active: m.active_player, uri: uri("/games/#{name}/#{m.id}")}}
 		end
 
 		post '/games/:name' do |name|
+			authenticate!
 			game = @game_class.create!({player1: "jesus", player2: "alicia"})
 			redirect "/games/#{name}/#{game.id}"
 		end
 		
 		get '/games/:name/:id' do |name, _|
+			authenticate!
 			json game_for(@game, @user, name)
 		end
 
 		post '/games/:name/:id/event' do |name, _|
+			authenticate!
 			halt 403, "Not your turn" unless @user.id == @game.active_player
 			request.body.rewind
   			data = JSON.parse request.body.read
