@@ -35,15 +35,15 @@ module GameFramework
 
 		post '/auth' do 
    			user = User.authenticate params["username"], params["password"]
-			json token: user.token, success: true
-		end
-
-		get '/' do
-			redirect '/games'
+   			if user
+				json token: user.token, success: true
+			else 
+				halt 401
+			end
 		end
 
 		get '/games' do
-			games = GameFramework::Game.available_games.map {|name,_| {id: name, name: name, uri: uri("/games/#{name}")}}
+			games = GameFramework::Game.available_games.map {|name,_| {id: name, name: name, rels: {uri: uri("/games/#{name}")}}}
 			json games: games
 		end
 
@@ -55,7 +55,7 @@ module GameFramework
 
 		post '/games/:name' do |name|
 			authenticate!
-			game = @game_class.create!({player1: "jesus", player2: "alicia"})
+			game = @game_class.create!({players: ["jesus", "alicia"]})
 			redirect "/games/#{name}/#{game.id}"
 		end
 		

@@ -2,24 +2,11 @@ require 'gameframework/game/game'
 require 'gameframework/game/event'
 require 'gameframework/components/state_machine'
 
-module TicTacToe
-	class TicTacToe < GameFramework::Game
-		include Mongoid::Document
-
-		view_path File.expand_path(File.join(File.dirname(__FILE__), "views"))
-		initial_view :map
-		initial_accepted_events :move
-
-		field :active_player, type: String, default: -> {self.player1}
+module GameFramework
+	class TicTacToe < Game
 		field :active_symbol, type: String, default: "@"
-		field :player1, type: String
-		field :player2, type: String
 		field :map, type: Array, default: Array.new(3) {Array.new(3)}
 	
-		def for_user user
-			{active_player: active_player, map: map}
-		end
-
 		after_initialize do
 			puts "initializing tictactoe game"
 			@machine = StateMachineBuilder.new.build(self, :created) do 
@@ -36,7 +23,12 @@ module TicTacToe
 			@machine.fire :start
 		end
 
-		def move event
+		def for_user user
+			{active_player: active_player, map: map}
+		end
+
+		def execute_event event
+			raise "Invalid event id" unless event.id == :move
 			@x = event.params[:x].to_i
 			@y = event.params[:y].to_i
 			@machine.fire :move
@@ -60,7 +52,7 @@ module TicTacToe
 		end
 
 		def switch_active_player
-			self.active_player = (active_player == player1 ? player2 : player1)
+			next_player!
 			self.active_symbol = (active_symbol == "@" ? "X" : "@")
 		end
 

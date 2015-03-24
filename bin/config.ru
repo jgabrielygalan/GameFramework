@@ -1,4 +1,5 @@
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "../lib"))
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "../lib/gameframework"))
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
 require 'gameframework/controller/sinatra_controller'

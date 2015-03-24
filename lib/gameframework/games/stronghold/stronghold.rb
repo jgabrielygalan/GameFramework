@@ -5,10 +5,10 @@ require 'gameframework/components/bag'
 module Stronghold
 	UNIT_VALUE = {:g => 1, :o => 2, :t => 3}
 
-	class Game < GameFramework::Game
-		view_path File.expand_path(File.join(File.dirname(__FILE__), "views"))
-		initial_view :initial
-		initial_accepted_events :turn_start
+	class Game #< GameFramework::Game
+		#view_path File.expand_path(File.join(File.dirname(__FILE__), "views"))
+		#initial_view :initial
+		#initial_accepted_events :turn_start
 
 		attr_accessor :resources, :action_units, :attacker_glory, :unit_pouch
 		attr_accessor :defender_glory, :hourglasses, :used_glory_abilities

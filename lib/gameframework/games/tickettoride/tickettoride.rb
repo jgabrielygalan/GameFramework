@@ -5,14 +5,14 @@ require 'gameframework/components/deck'
 require 'set'
 
 module TicketToRide
-	class Game < GameFramework::Game
+	class Game #< GameFramework::Game
 		COLORS = %w{white black green blue yellow purple red orange}
 		ACTIONS = [:draw_tickets, :draw_card, :build]
 		VIEW_AND_ACTIONS = [:initial, ACTIONS]
-		view_path File.expand_path(File.join(File.dirname(__FILE__), "views"))
-		resource_path File.expand_path(File.join(File.dirname(__FILE__), "public"))
-		initial_view :initial
-		initial_accepted_events ACTIONS
+		#view_path File.expand_path(File.join(File.dirname(__FILE__), "views"))
+		#resource_path File.expand_path(File.join(File.dirname(__FILE__), "public"))
+		#initial_view :initial
+		#initial_accepted_events ACTIONS
 
 		attr_accessor :players, :routes, :display, :deck, :discard 
 		attr_reader :second_card, :drawn_tickets
