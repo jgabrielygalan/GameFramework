@@ -50,7 +50,7 @@ module GameFramework
 		get '/games/:name' do |name|
 			authenticate!
 			matches = @game_class.each.to_a
-			json matches.map {|m| {player1: m.player1, player2: m.player2, active: m.active_player, uri: uri("/games/#{name}/#{m.id}")}}
+			json matches.map {|m| {players: m.players, active: m.active_player, rels: {uri: uri("/games/#{name}/#{m.id}")}}}
 		end
 
 		post '/games/:name' do |name|

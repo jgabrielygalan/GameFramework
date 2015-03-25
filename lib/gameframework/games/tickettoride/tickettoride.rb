@@ -4,8 +4,8 @@ require 'gameframework/components/playerlist'
 require 'gameframework/components/deck'
 require 'set'
 
-module TicketToRide
-	class Game #< GameFramework::Game
+module GameFramework
+	class TicketToRide < GameFramework::Game
 		COLORS = %w{white black green blue yellow purple red orange}
 		ACTIONS = [:draw_tickets, :draw_card, :build]
 		VIEW_AND_ACTIONS = [:initial, ACTIONS]
@@ -14,10 +14,10 @@ module TicketToRide
 		#initial_view :initial
 		#initial_accepted_events ACTIONS
 
-		attr_accessor :players, :routes, :display, :deck, :discard 
+		attr_accessor :routes, :display, :deck, :discard 
 		attr_reader :second_card, :drawn_tickets
 		
-		def initialize(*players)
+		after_initialize do
 			setup_deck_and_display
 			setup_tickets
 			@players = setup_players players
