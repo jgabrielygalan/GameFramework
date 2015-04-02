@@ -1,4 +1,68 @@
 /* Put your CSS here */
+
+
+
 html, body {
     margin: 20px;
+}
+
+div#wrapper {
+  background: teal;
+  padding: 10px;
+  min-height: 250px;
+  overflow: hidden;
+
+  div#container {
+    width: 30px;
+	  margin: 0 auto;
+    padding: 10px 0;
+
+    section#content {
+      width: 10px;
+
+      h1 {
+        margin: 0;
+        padding: 0 0 20px 0;
+      }
+    }
+  }
+}
+
+table#example {
+	font-size:12px;
+	border-radius: 2px;
+	border:solid;
+	color: #B8B8B8;
+	border-color:#484848;
+	text-align:left;
+	vertical-align:middle;
+	width: 960px;
+	margin:2px ;
+	padding: 5px 5px 0px 0px;
+	background:#FFFFFF;
+
+  tr:first-child {
+    font-weight:bold;
+  }
+  tr:nth-child(even) { /*(even) or (2n 0)*/
+    background: #FFFFFF;
+  }
+  tr:nth-child(odd) { /*(odd) or (2n 1)*/
+    background: #FFFFFF;
+  }
+}
+
+table#board {
+  background: orange;
+  vertical-align:middle;
+  padding: 20px 20px;
+  width: 20px;
+
+  tr {
+    width: 20px;
+    margin: 10px;
+    align: center;
+    min-height: 20px;
+    padding: 20px 20px;
+  }
 }
