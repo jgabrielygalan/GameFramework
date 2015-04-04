@@ -18,6 +18,10 @@ module GameFramework
 			class_name = subclass.name.to_s.split("::").last
 			(@available_games ||= {})[class_name] = subclass
 		end
+
+		def name 
+			self.class.name.to_s.split("::").last
+		end
 		
 		after_initialize do 
 			@player_list = GameFramework::PlayerList.new *(players.shuffle)
