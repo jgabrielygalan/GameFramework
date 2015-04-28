@@ -49,7 +49,7 @@ module GameFramework
 
 		get '/matches' do
 			authenticate!
-			json GameFramework::Game.each.to_a.map {|m| {players: m.players, active: m.active_player, rels: {uri: uri("/games/#{m.name}/#{m.id}")}}}
+			json GameFramework::Game.each.to_a.map {|m| game_for(m, @user)}
 		end
 
 		get '/games/:name' do |name|
@@ -66,7 +66,7 @@ module GameFramework
 		
 		get '/games/:name/:id' do |name, _|
 			authenticate!
-			json game_for(@game, @user, name)
+			json game_for(@game, @user)
 		end
 
 		post '/games/:name/:id/event' do |name, _|
@@ -81,7 +81,7 @@ module GameFramework
 			e = get_event(data)
 			@game.execute_event e
 			@game.save
-			json game_for(@game, @user, name)
+			json game_for(@game, @user)
 		end
 
 		def get_event data
@@ -89,12 +89,15 @@ module GameFramework
 			Event.new id.to_sym, data
 		end
 
-		def game_for game, user, name
-			game_data = {game: game.for_user(user)}
+		def game_for game, user
+			game_data = {data: game.for_user(user)}
+			game_data[:links] = {self: uri("/games/#{game.name}/#{game.id}")}
 			if game.is_active_player? user
-				game_data[:uri] = uri("/games/#{name}/#{game.id}/event")
+				game_data[:links][:event] = uri("/games/#{game.name}/#{game.id}/event")
+
 			end
 			game_data
 		end
 	end
 end
+

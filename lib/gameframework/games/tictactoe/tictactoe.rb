@@ -9,6 +9,7 @@ module GameFramework
 	
 		after_initialize do
 			puts "initializing tictactoe game"
+			initialize_player_map
 			@machine = StateMachineBuilder.new.build(self, :created) do 
 				transition :created => :waiting_move, :on => :start do |context|
 				end
@@ -23,8 +24,18 @@ module GameFramework
 			@machine.fire :start
 		end
 
-		def for_user user
-			{active_player: active_player, map: map}
+		def initialize_player_map
+			@symbol_mapping = Hash[*%w{@ X}.zip(players).flatten(1)]
+			@player_map = Hash[*players.map{|p| [p, []]}.flatten(1)]
+			map.each_with_index do |row, i|
+				row.each_with_index do |symbol, j|					
+					@player_map[@symbol_mapping[symbol]] << [i,j] if symbol
+				end
+			end
+		end
+
+		def state_for user
+			{"map" => @player_map}
 		end
 
 		def execute_event event
@@ -39,6 +50,7 @@ module GameFramework
 			raise "Out of bounds" if out_of_bounds(@x,@y)
 			raise "Space not free" if space_not_free(@x,@y)
 			map[@x][@y] = active_symbol
+			@player_map[@symbol_mapping[col]] << [@x,@y]
 			switch_active_player
 			@result = [:map, [:move]]
 		end
@@ -67,8 +79,5 @@ module GameFramework
 			(map[2][0] && map[2][0] == map[1][1] && map[2][0] == map[0][2])
 		end
 
-		def is_active_player? user
-			user && user.name == active_player
-		end
 	end
 end

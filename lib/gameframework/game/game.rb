@@ -13,6 +13,15 @@ module GameFramework
 		field :active_player, type: String, default: -> {self.players.first}
 		field :players, type: Array
 		
+		def for_user user
+			{
+				type: "match",
+    			id: id,
+    			active_player: active_player,
+    			state: state_for(user)
+   			}
+		end
+
 		def self.inherited subclass
 			super # we need to call super cause Mongoid uses the inherited hook to setup SCI (_type)
 			class_name = subclass.name.to_s.split("::").last
@@ -34,6 +43,10 @@ module GameFramework
 
 		def ended?
 			false
+		end
+
+		def is_active_player? user
+			user && user.name == active_player
 		end
 	end
 end
