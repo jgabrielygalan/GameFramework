@@ -1,6 +1,6 @@
 require 'ostruct'
 require 'mongoid'
-require 'components/playerlist'
+require 'gameframework/components/playerlist'
 
 module GameFramework
 	class Game
@@ -18,6 +18,7 @@ module GameFramework
 				type: "match",
     			id: id,
     			active_player: active_player,
+    			match_finished: is_match_finished?,
     			state: state_for(user)
    			}
 		end
@@ -33,7 +34,9 @@ module GameFramework
 		end
 		
 		after_initialize do 
-			@player_list = GameFramework::PlayerList.new *(players.shuffle)
+			@player_list = GameFramework::PlayerList.new *(players)
+			@player_list.set_current_player active_player
+			puts "after_initialize game, #{@player_list}"
 		end
 
 		def next_player!

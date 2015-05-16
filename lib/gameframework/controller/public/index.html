@@ -68,10 +68,11 @@
             </thead>
 
             <tbody>
-              {{#each match in model}}
+                {{#each match in model}}
                 <tr>
                   <td>
-                    {{match.players}} <small class='muted'>{{match.rels.uri}}</small>
+                    {{#link-to 'match' match}}{{match.players}} <small class='muted'>{{match.rels.uri}}</small>{{/link-to}}
+                    
                   </td>
                 </tr>
               {{/each}}
@@ -86,6 +87,26 @@
     </div>
   </script>
 
+  <script type="text/x-handlebars" id="match">
+    <div class="container-fluid">
+      The match: {{players}} active: {{model.active}}
+      <div id="wrapper">
+      <table id="board">
+      {{#each row in state.map}}
+        <tr {{bindAttr id="_view.contentIndex"}}>
+          {{#each col in row}}
+          <td {{bindAttr id="_view.contentIndex"}} {{action 'choose'}}>{{col}}</td>
+          {{/each}}
+        </tr>
+      {{/each}}
+      </table>
+    </div>
+    <button name="btnFinish" onclick="sendBoard()">Finish move</button>
+    <button name="btnResetMove" onclick="resetMove()">Reset move</button>
+
+    </div>
+  </script>
+  <!-- <script src="js/tictactoe.js"></script> -->
 
 
 <script type="text/x-handlebars" id="login">

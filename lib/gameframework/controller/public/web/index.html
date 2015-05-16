@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Board games online</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Board games</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active">
+          <button id="matchesButton" type="button" class="btn btn-primary navbar-btn" disabled="disabled">Matches</button>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+        <form id="loginForm" class="navbar-form navbar-left" role="search">
+          <div class="form-group">
+            <input id="username" type="text" class="form-control" placeholder="Username">
+            <input id="password" type="password" class="form-control" placeholder="Password">
+          </div>
+          <button id="loginButton" type="submit" class="btn btn-default">Login</button>
+        </form>
+        </li>
+        <li id="loggedInNavBar" class="hidden">
+          <p id="loggedInMessage" class="navbar-text">Welcome !</p>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+    <h1>Board Games</h1>
+    <div id="content" class="container-fluid">
+      <div class="row">
+      Log in and click Matches to see your matches.
+      </div>
+    </div>
+
+
+<div id="matchModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                <li><button id="submitMoveButton" type="button" class="btn btn-primary navbar-btn" disabled="disabled">Submit move</button></li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <li><button type="button" class="btn btn-default navbar-btn" data-dismiss="modal">Close</button></li>
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>      
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered" >
+          <tr>
+            <td id="tictactoecell-0-0" data-x="0" data-y="0" class="tictactoecell col-md-4"></td>
+            <td id="tictactoecell-1-0" data-x="1" data-y="0" class="tictactoecell col-md-4"></td>
+            <td id="tictactoecell-2-0" data-x="2" data-y="0" class="tictactoecell col-md-4"></td>
+          </tr>
+          <tr>
+            <td id="tictactoecell-0-1" data-x="0" data-y="1" class="tictactoecell col-md-4"></td>
+            <td id="tictactoecell-1-1" data-x="1" data-y="1" class="tictactoecell col-md-4"></td>
+            <td id="tictactoecell-2-1" data-x="2" data-y="1" class="tictactoecell col-md-4"></td>
+          </tr>
+          <tr>
+            <td id="tictactoecell-0-2" data-x="0" data-y="2" class="tictactoecell col-md-4"></td>
+            <td id="tictactoecell-1-2" data-x="1" data-y="2" class="tictactoecell col-md-4"></td>
+            <td id="tictactoecell-2-2" data-x="2" data-y="2" class="tictactoecell col-md-4"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
+
+<!--
+<img id="Image-Maps-Com-image-maps-2015-05-13-183445" src="http://www.easytoddlercrafts.com/images/tictactoe.jpg" border="0" width="300" height="300" orgWidth="300" orgHeight="300" usemap="#image-maps-2015-05-13-183445" alt="" />
+<map name="image-maps-2015-05-13-183445" id="ImageMapsCom-image-maps-2015-05-13-183445">
+<area  alt="" title="" href="http://www.image-maps.com/" shape="rect" coords="5,10,92,90" style="outline:none;" target="_self"     />
+<area  alt="" title="" href="http://www.image-maps.com/" shape="rect" coords="105,11,192,91" style="outline:none;" target="_self"     />
+<area  alt="" title="" href="http://www.image-maps.com/" shape="rect" coords="207,14,294,94" style="outline:none;" target="_self"     />
+<area  alt="" title="" href="http://www.image-maps.com/" shape="rect" coords="5,109,92,189" style="outline:none;" target="_self"     />
+<area  alt="" title="" href="http://www.image-maps.com/" shape="rect" coords="103,111,190,191" style="outline:none;" target="_self"     />
+<area shape="rect" coords="298,298,300,300" alt="Image Map" style="outline:none;" title="Image Map" href="http://www.image-maps.com/index.php?aff=mapped_users_0" />
+</map>
+
+  -->

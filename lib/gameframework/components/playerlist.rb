@@ -9,6 +9,10 @@ module GameFramework
 			@last_player = false
 		end
 		
+		def set_current_player player
+			@current = @players.find_index player
+		end
+
 		def current_player
 			@players[@current]
 		end
@@ -29,6 +33,10 @@ module GameFramework
 		
 		def each &blk
 			@players.each &blk
+		end
+
+		def to_s
+			{players: @players, current: @current, last: @last_player}.to_s
 		end
 	end
 end

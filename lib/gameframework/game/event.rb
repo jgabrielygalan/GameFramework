@@ -4,7 +4,7 @@ module GameFramework
 	
 		def initialize id, params = {}
 			@id = id
-			@params = indifferent_params params.nil? ? {} : params
+			@params = indifferent_params params
 		end
 
 		def to_json *a
