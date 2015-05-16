@@ -78,7 +78,7 @@ module GameFramework
         end
 
         def board_full?
-            occupied_cells = map.inject(0) {|total, player| total + player.size}
+            occupied_cells = map.inject(0) {|total, (player, cells)| total + cells.size}
             occupied_cells >= 9
         end
 
