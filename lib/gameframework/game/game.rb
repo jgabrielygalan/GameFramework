@@ -17,6 +17,7 @@ module GameFramework
 			{
 				type: "match",
     			id: id,
+    			players: players,
     			active_player: active_player,
     			match_finished: is_match_finished?,
     			state: state_for(user)
