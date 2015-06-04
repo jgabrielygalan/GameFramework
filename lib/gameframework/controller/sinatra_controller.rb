@@ -79,9 +79,13 @@ module GameFramework
 			halt 400, "Event body is empty" if data.nil? 
 
 			e = get_event(data)
-			@game.execute_event e
-			@game.save
-			json game_for(@game, @user)
+			begin
+				@game.execute_event e
+				@game.save
+				json game_for(@game, @user)
+			rescue InvalidEventError => e
+				halt 400, e.message
+			end
 		end
 
 		def get_event data

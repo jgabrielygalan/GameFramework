@@ -42,17 +42,16 @@ module GameFramework
         end
 
         def parse_and_validate_event event
-            raise "Invalid event id" unless event.id == :move
+            raise InvalidEventError, "Invalid event id" unless event.id == :move
 
             begin
                 @x = Integer(event.params[:x])
                 @y = Integer(event.params[:y])
-            rescue ArgumentError
-                raise "Params x and y should be integers"
+            rescue ArgumentError, TypeError
+                raise InvalidEventError, "Params x and y should exist and be integers"
             end
-            puts "in validate_event: #{[@x,@y]}"
-            raise "Out of bounds" if out_of_bounds(@x,@y)
-            raise "Space not free" if space_not_free(@x,@y)
+            raise InvalidEventError, "Out of bounds" if out_of_bounds(@x,@y)
+            raise InvalidEventError, "Space not free" if space_not_free(@x,@y)
         end
         
         def execute_event event

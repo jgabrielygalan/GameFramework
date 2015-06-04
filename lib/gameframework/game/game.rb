@@ -3,6 +3,11 @@ require 'mongoid'
 require 'gameframework/components/playerlist'
 
 module GameFramework
+
+	class InvalidEventError < ::StandardError
+
+	end
+
 	class Game
 		include Mongoid::Document
 
