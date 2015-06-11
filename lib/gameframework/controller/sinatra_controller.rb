@@ -60,7 +60,7 @@ module GameFramework
 
 		post '/games/:name' do |name|
 			authenticate!
-			game = @game_class.create!({players: ["jesus", "alicia"]})
+			game = @game_class.create!({players: ["jesus", "dix"]})
 			redirect "/games/#{name}/#{game.id}"
 		end
 		
