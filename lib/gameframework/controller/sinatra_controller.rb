@@ -7,21 +7,17 @@ require 'sinatra/json'
 
 module GameFramework
 	class SinatraController < Sinatra::Base
-		helpers do 
-			def resource_path resource
-				File.join('resources', session['game_key'], resource)
-			end
+		configure do
+			enable :logging
+		end
 
+		helpers do 
 			def authenticate!
 				token = params["token"]
 				halt 401 unless token
 				@user = User.find_by(token: token)
 				halt 401 unless @user
 			end
-		end
-
-		configure do
-			enable :logging
 		end
 
 		before '/games/:name/?:id?/?*' do |name,id,_|
@@ -43,8 +39,7 @@ module GameFramework
 		end
 
 		get '/games' do
-			games = GameFramework::Game.available_games.map {|name,_| {id: name, name: name, rels: {uri: uri("/games/#{name}")}}}
-			json games: games
+			json GameFramework::Game.available_games.map {|name,_| {id: name, name: name, rels: {uri: uri("/games/#{name}")}}}
 		end
 
 		get '/matches' do
@@ -60,8 +55,12 @@ module GameFramework
 
 		post '/games/:name' do |name|
 			authenticate!
-			game = @game_class.create!({players: ["jesus", "dix"]})
-			redirect "/games/#{name}/#{game.id}"
+			request.body.rewind
+  			data = JSON.parse request.body.read # expected JSON: {"opponent": "abcde"}
+  			halt 400, "No opponent" unless data["opponent"]
+  			halt 404, "Opponent doesn't exist" unless User.find_by(name: data["opponent"])
+			game = @game_class.create!({players: [@user.name, data["opponent"]]})			
+			json game_for(game, @user)
 		end
 		
 		get '/games/:name/:id' do |name, _|
@@ -86,6 +85,10 @@ module GameFramework
 			rescue InvalidEventError => e
 				halt 400, e.message
 			end
+		end
+
+		get '/users' do
+			json User.all.map {|u| u.name}
 		end
 
 		def get_event data
